@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UčeňKlik</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f8e8c8;
+        }
+        #cookie {
+            width: 200px;
+            cursor: pointer;
+        }
+        #counter {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .upgrade-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .upgrade-row {
+            display: flex;
+            gap: 10px;
+        }
+        .auto-clickers {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        .upgrade {
+            margin: 5px;
+            padding: 10px;
+            background-color: #ffcc66;
+            border: none;
+            cursor: pointer;
+        }
+        #themeButton, #resetButton {
+            position: fixed;
+            bottom: 50px;
+            right: 10px;
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #resetButton {
+            bottom: 10px;
+            background-color: red;
+        }
+        #themeMenu {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 10px;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>UčeňKlik</h1>
+    <p id="counter">Učňů: 0</p>
+    <img id="cookie" src="filipus_minimus.jpg" alt="Cookie" onclick="incrementCookies()">
+    <div class="upgrade-container">
+        <div class="upgrade-row">
+            <button class="upgrade" onclick="buyUpgrade(1, 100, 'clickUpgrade1')">Koupit Nugetu (+1 klik) - 100 učňů (<span id="clickUpgrade1">0</span>)</button>
+            <button class="upgrade" onclick="buyUpgrade(5, 500, 'clickUpgrade5')">Koupit Bílého Monstra (+5 kliků) - 500 učňů (<span id="clickUpgrade5">0</span>)</button>
+        </div>
+        <div class="auto-clickers">
+            <button class="upgrade" onclick="buyAutoClicker(1, 1000, 'autoClicker1')">Koupit Femboye (+1/s) - 1 000 učňů (<span id="autoClicker1">0</span>)</button>
+        </div>
+    </div>
+    <button id="themeButton" onclick="toggleThemeMenu()">Změnit Design</button>
+    <div id="themeMenu">
+        <button onclick="setTheme('#3d5a80', '#98c1d9', '#e0fbfc', '#ee6c4d', '#293241')">Modrá</button>
+        <button onclick="setTheme('#2b2d42', '#8d99ae', '#edf2f4', '#ef233c', '#d90429')">Červená</button>
+        <button onclick="setTheme('#ef476f', '#ffd166', '#06d6a0', '#118ab2', '#073b4c')">Barevná</button>
+        <button onclick="setTheme('#000000', '#14213d', '#fca311', '#e5e5e5', '#ffffff')">Tmavá</button>
+    </div>
+    <button id="resetButton" onclick="resetProgress()">Resetovat Progres</button>
+    <script>
+        let cookies = 0;
+        let cookiesPerClick = 1;
+        let autoClickers = 0;
+        
+        function incrementCookies() {
+            cookies += cookiesPerClick;
+            updateCounter();
+        }
+
+        function buyUpgrade(clickValue, cost, upgradeId) {
+            if (cookies >= cost) {
+                cookies -= cost;
+                cookiesPerClick += clickValue;
+                document.getElementById(upgradeId).innerText++;
+                updateCounter();
+            }
+        }
+
+        function buyAutoClicker(rate, cost, clickerId) {
+            if (cookies >= cost) {
+                cookies -= cost;
+                autoClickers += rate;
+                document.getElementById(clickerId).innerText++;
+                updateCounter();
+            }
+        }
+
+        function updateCounter() {
+            document.getElementById("counter").innerText = `Učňů: ${cookies}`;
+        }
+
+        setInterval(() => {
+            cookies += autoClickers;
+            updateCounter();
+        }, 1000);
+
+        function toggleThemeMenu() {
+            let menu = document.getElementById("themeMenu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        function setTheme(bg, primary, secondary, accent, text) {
+            document.body.style.backgroundColor = bg;
+            document.body.style.color = text;
+            let buttons = document.querySelectorAll("button");
+            buttons.forEach(btn => {
+                btn.style.backgroundColor = primary;
+                btn.style.color = text;
+            });
+            let upgrades = document.querySelectorAll(".upgrade");
+            upgrades.forEach(upg => upg.style.backgroundColor = secondary);
+        }
+
+        function resetProgress() {
+            if (confirm("Opravdu chcete vymazat progres?")) {
+                cookies = 0;
+                cookiesPerClick = 1;
+                autoClickers = 0;
+                document.getElementById("clickUpgrade1").innerText = 0;
+                document.getElementById("clickUpgrade5").innerText = 0;
+                document.getElementById("autoClicker1").innerText = 0;
+                updateCounter();
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem("cookies", cookies);
+            localStorage.setItem("perClick", perClick);
+            localStorage.setItem("perSecond", perSecond);
+            localStorage.setItem("clickUpgrade1Count", clickUpgrade1Count);
+            localStorage.setItem("clickUpgrade5Count", clickUpgrade5Count);
+            localStorage.setItem("autoClickerCount", autoClickerCount);
+        }
+
+        
+    </script>
+</body>
+</html>
